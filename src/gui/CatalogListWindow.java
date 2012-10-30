@@ -189,7 +189,7 @@ public class CatalogListWindow extends javax.swing.JWindow implements ParentWind
 	private void updateModel() {
 		List<String[]> theData = new ArrayList<String[]>();
         if(USE_DEFAULT_DATA) {
-			theData = DefaultData.getCatalogTypes();
+			//theData = DefaultData.getCatalogTypes();
         }
 		updateModel(theData);
  	}	
