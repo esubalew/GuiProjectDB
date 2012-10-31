@@ -6,6 +6,11 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +23,6 @@ import javax.swing.JTable;
 import javax.swing.JWindow;
 
 /**
- * 
- * @author klevi, pcorazza 
- * @since Oct 22, 2004
- * <p>
  * Class Description: This screen displays a table of all
  * orders currently stored in the database (on initial
  * creation of this class, fake data from DefaultData, is
@@ -29,26 +30,6 @@ import javax.swing.JWindow;
  * in the table, and clicks the ViewDetails button, 
  * an instance of ViewOrderDetailsWindow is created, which
  * displays details of the selected order.
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * <tr>
- * 		<td>Jan 19, 2005</td>
- *      <td>klevi</td>
- *      <td>modifed the readdata comments</td>
- * </tr>
- * </table>
- *
  */
 public class SelectOrderWindow extends JWindow implements ParentWindow {
 	private Window parent;
@@ -183,8 +164,42 @@ public class SelectOrderWindow extends JWindow implements ParentWindow {
 			DefaultData dd = DefaultData.getInstance();
 			theData = dd.getSelectOrderDefaultData();
         }
+        else {
+        	//assume custId is 1
+        	Integer custId = 1;
+            List<Integer> orderIds = getAllOrderIds(custId);
+            int numOrders = orderIds.size();
+            Integer orderId = null;
+            String[] orderData = null;
+            for(int i =0; i < numOrders; ++i){
+                orderId = orderIds.get(i);
+                orderData = getOrderData(orderId);
+                theData.add(orderData);
+            }
+        }
 		updateModel(theData);
  	}	
+	//IMPLEMENT
+	private List<Integer> getAllOrderIds(Integer custId){
+		List<Integer> allIds = new ArrayList<Integer>();
+		//now populate this list with all order ids that
+		//are associated with this custId in the Order table
+ 
+		return allIds;
+			
+	}
+	//IMPLEMENT
+	private String[] getOrderData(Integer orderId){
+		
+		String[] orderData = new String[3];
+		//write code here that populates this 3-element string array
+		//with the appropriate order info for this orderId:
+		//          orderid, orderdate, totalpriceamount
+		//orderid will need to be converted to a String
+		
+		
+		return orderData;
+	}		
 	
 	
 
@@ -209,7 +224,8 @@ public class SelectOrderWindow extends JWindow implements ParentWindow {
         	int selectedRow = table.getSelectedRow();
         	if(selectedRow >= 0) {
          		setVisible(false);
-        		ViewOrderDetailsWindow win = new ViewOrderDetailsWindow();
+         		String selOrderId = (String)model.getValueAt(selectedRow,0);
+        		ViewOrderDetailsWindow win = new ViewOrderDetailsWindow(selOrderId);
         		win.setVisible(true);
         		win.setParentWindow(SelectOrderWindow.this);      		
         		

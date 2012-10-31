@@ -15,10 +15,6 @@ import javax.swing.JTextArea;
 import javax.swing.JWindow;
 
 /**
- * 
- * @author klevi, pcorazza 
- * @since Oct 22, 2004
- * <p>
  * Class Description: This class provides detailed information
  * about a selected product. When the user clicks the Browse button
  * on the ProductListWindow screen, the product details for the selected
@@ -26,21 +22,6 @@ import javax.swing.JWindow;
  * to add the product, whose detailed description is given here, to
  * the shopping cart (and if this option is chosen, the CartItemsWindow
  * is invoked).
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * </table>
- *
  */
 public class ProductDetailsWindow extends JWindow implements ParentWindow {
 	//////////////constants

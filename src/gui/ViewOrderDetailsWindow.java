@@ -6,7 +6,13 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -51,6 +57,7 @@ public class ViewOrderDetailsWindow extends JWindow implements ParentWindow {
 	CustomTableModel model;
 	JTable table;
 	JScrollPane tablePane;
+	String orderId;
 	
 	//JPanels
 	JPanel mainPanel;
@@ -79,7 +86,8 @@ public class ViewOrderDetailsWindow extends JWindow implements ParentWindow {
 
     	
     	
-	public ViewOrderDetailsWindow() {
+	public ViewOrderDetailsWindow(String orderId) {
+		this.orderId = orderId;
 		initializeWindow();
 		defineMainPanel();
 		getContentPane().add(mainPanel);
@@ -154,14 +162,17 @@ public class ViewOrderDetailsWindow extends JWindow implements ParentWindow {
 	        model = new CustomTableModel();
     	    
 		}
-		model.setTableValues(list);	
+		model.setTableValues(list);		
 	}
 	
 	/**
 	 * If default data is being used, this method obtains it
 	 * and then passes it to updateModel(List). If real data is
-	 * being used, the public updateModel(List) should be called by
-	 * the controller class.
+	 * being obtained in the GuiDB exercise, it is again stored in a List
+	 * and passed to updateModel(List). When controllers are introduced,
+	 * the list of data from the database should be passed in to the
+	 * updateModel(List) method by the appropriate
+	 * controller.
 	 */
 	private void updateModel() {
 		List<String[]> theData = new ArrayList<String[]>();
@@ -169,8 +180,51 @@ public class ViewOrderDetailsWindow extends JWindow implements ParentWindow {
 			DefaultData dd = DefaultData.getInstance();
 			theData = dd.getViewOrderDetailsDefaultData();
         }
+        //IMPLEMENT
+        else {
+        	Connection con = null;
+        	Statement stmt = null;
+        	String dburl = "jdbc:mysql:///AccountsDb";
+    		try{
+    			con = DriverManager.getConnection(dburl, "root", "");
+    		}
+    		catch(SQLException e){
+    			System.out.println(e.getMessage());
+    			e.printStackTrace();
+    		}
+    		theData = new LinkedList<String[]>();
+    		//now load up theData by performing a query on OrderItem and making
+    		//use of the method getProdNameForId
+    		
+        	
+        }
 		updateModel(theData);
- 	}		
+ 	}
+	String getProdNameForId(String prodId){
+    	Connection con = null;
+    	Statement stmt = null;
+    	String name = null;
+    	String dburl = "jdbc:mysql:///ProductsDb";
+		try{
+			con = DriverManager.getConnection(dburl, "root", "");
+		}
+		catch(SQLException e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		try {
+			stmt = con.createStatement();
+			//first find the catalog id
+			ResultSet rs = stmt.executeQuery("SELECT productname FROM Product WHERE productid = '"+prodId+"'");
+			if(rs.next()){
+				name = rs.getString("productname");
+			}
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		return name;
+	}
 	
 
     private void updateTable() {
@@ -198,8 +252,7 @@ public class ViewOrderDetailsWindow extends JWindow implements ParentWindow {
 	}
 	
 	public static void main(String[] args) {
-		ViewOrderDetailsWindow w = new ViewOrderDetailsWindow();
-		w.setVisible(true);
+		
 	}	
 
 	private static final long serialVersionUID = 3258415049298031927L;

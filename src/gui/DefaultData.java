@@ -2,35 +2,11 @@ package gui;
 import java.util.*;
 
 /**
- * 
- * @author klevi, pcorazza 
- * @since Oct 22, 2004
- * <p>
  * Class Description: This class stores "dummy data" for the Gui. In the final project,
  *  this class should not be used, but should be replaced by appropriate
  *  accesses of the real data. <br>
  *  The class is a singleton. Only one instance is ever used. Also, no
  *  writes to the class ever occur, so it is thread-safe.
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * <tr>
- * 		<td>19 jan 2005</td>
- *      <td>klevi</td>
- *      <td>modified class comment</td>
- * </tr>
- * </table>
- *
  */
 public class DefaultData {
 	
@@ -61,7 +37,7 @@ public class DefaultData {
 	public final static String TSHIRTS = "T-Shirts";
     public final static String SKIRTS = "Skirts";
     public static final String BOOKS = "Books";
-    public static final String CLOTHES = "Clothes";	
+    public static final String CLOTHES = "Clothing";	
     
     //field names for MaintainProductCatalog and AddEditProduct; enumerated constants used for accessing
     //fieldNames array dynamically

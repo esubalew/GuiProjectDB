@@ -6,10 +6,12 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,35 +22,11 @@ import javax.swing.JTable;
 
 
 /**
- * 
- * @author klevi, pcorazza 
- * @since Oct 22, 2004
- * <p>
  * Class Description: This window displays all known products belonging
  * to the selected catalog group. The catalog group is passed into
  * the constructor as  a parameter. In the final version of the
  * application, the products displayed should be all products in
  * the database having category group equal to this parameter. 
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * <tr>
- * 		<td>Jan 19, 2005</td>
- *      <td>klevi</td>
- *      <td>modifed the readdata comments</td>
- * </tr>
- * </table>
- *
  */
 public class ProductListWindow extends javax.swing.JWindow implements ParentWindow {
 
@@ -109,7 +87,6 @@ public class ProductListWindow extends javax.swing.JWindow implements ParentWind
 		initializeTableHeaderTable();
 		defineMainPanel();
 		getContentPane().add(mainPanel);
-		
 		
 	}
 	
@@ -194,8 +171,11 @@ public class ProductListWindow extends javax.swing.JWindow implements ParentWind
 	/**
 	 * If default data is being used, this method obtains it
 	 * and then passes it to updateModel(List). If real data is
-	 * being used, the public updateModel(List) should be called by
-	 * the controller class.
+	 * being used in the GuiDB exercise, read data from DB here,
+	 * load into a list, and pass to updateModel(List). If
+	 * controllers have been implemented, then the List of data
+	 * should be passed to updateModel(List) from the appropriate
+	 * controller class.
 	 */
 	private void updateModel() {
 		List<String[]> theData = new ArrayList<String[]>();
@@ -203,44 +183,26 @@ public class ProductListWindow extends javax.swing.JWindow implements ParentWind
 			DefaultData dd = DefaultData.getInstance();
 			theData = dd.getCatalogWindowData(catalogType);
         }
+        else { // read database
+        	//Steps:
+        	
+        		//step 1: read the catalogid that goes with
+        	    //the catalogname in the CatalogType table
+        	
+        	
+        	    //step 2: extract all product names that go with
+        	    //this catalogid in the Product table, and add them to
+        	    //the list theData
+        	
+        	    //Warning: updateModel is expecting a list is of type List<String[]>
+        	    //Therefore, each time you add a product name to the list
+        	    //you must add it as a 1-element array
+        	    //Example:
+        	    //  String aProductName = //read from Product table
+        	    //  theData.add(new String[]{aProductName});
+        }
 		updateModel(theData);
  	}		
-	/**
-	 * This method loads data into a concrete subclass of AbstractTableModel,
-	 * to be displayed in a JTable. It is called when the GUI is built.<p>
-	 * Any time table data needs to be added, changed, or deleted,
-	 * updateModel must be called, followed by a call to updateTable.<p>
-	 * The the updateModel method, by default,
-	 * loads data by reading fake data from the DefaultData
-	 * class. For the E-Bazaar project, real data should be inserted somehow into
-	 * a variable in this class (by the constructor or some other setter) and
-	 * then accessed during execution of updateModel. 
-	 *
-	private void updateModel() {
-		if(model == null) {
-			model = new DefaultTableModel();
-    	    
-		}
-        if(USE_DEFAULT_DATA) {
-        	String colHeader = headers.getProperty(catalogType);
-        	model.addColumn(colHeader);
-        	DefaultData data = DefaultData.getInstance();			        	
-			String[][] defaultData = data.getCatalogWindowData(catalogType);
-        	for(int i= 0; i < defaultData.length; ++i) {
-        		model.addRow(defaultData[i]);
-        	}
-
-        }
-        else {
-        	//students: in this block, cast data to the right type 
-        	//and set values in model 
-        }
-	}	
-	*/
-	
-	
-	
-	
 	
     private void updateTable() {
 		GuiControl.createCustomColumns(table, 
@@ -281,9 +243,29 @@ public class ProductListWindow extends javax.swing.JWindow implements ParentWind
 	}
 		
 	class SelectButtonListener implements ActionListener {
-		HashMap<String,String[]> readProductDetailsData() {
+		//this method does the work when you are using default data
+		HashMap<String,String[]> readProductDetailsData(String type) {
+			
 			DefaultData productData = DefaultData.getInstance();
-			return productData.getProductDetailsData();	
+			return productData.getProductDetailsData();
+		}
+		//this method does the work when you are
+		//reading the database in the GuiDB exercise
+		List<String> readProductDetailsList(String type){
+			//implement -- read database to find data  
+			List<String> data = new ArrayList<String>();
+
+			//What to do:
+			//Use the product name, stored in the argument type,
+			//as a key in the product table (for example, "Pants")
+			//Using this, you can find all items of this type
+			//that are in the Product table.
+			//In the List, you need to store 4 values that will
+			//then be passed to the ProductDetailsWindow -- and
+			//these values must occur in this order:
+			//   item, price, quantity, and review			
+				 
+    		return data;			
 		}
         public void actionPerformed(ActionEvent evt) {
         	
@@ -294,9 +276,18 @@ public class ProductListWindow extends javax.swing.JWindow implements ParentWind
         		System.out.println(type);
         		
         		setVisible(false);
-        		
-        		HashMap<String,String[]> productTable = readProductDetailsData();
-        		String[] productParams = productTable.get(type);
+        		String[] productParams = null;
+        		if(USE_DEFAULT_DATA){
+        			HashMap<String,String[]> productTable = readProductDetailsData(type);
+        			productParams = productTable.get(type);
+        		}
+        		else {
+        			List<String> list = readProductDetailsList(type);
+        			productParams = new String[list.size()];
+        			for(int i = 0; i < productParams.length; ++i) {
+        				productParams[i] = list.get(i);
+        			} 
+        		}
         		//System.out.println("Is product params an instance of Object[]? "+(productParams instanceof Object[]));
         		ProductDetailsWindow pd =  new ProductDetailsWindow(productParams);
         		

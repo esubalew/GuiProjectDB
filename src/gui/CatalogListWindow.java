@@ -6,6 +6,11 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +25,6 @@ import gui.CatalogListWindow;
 
 
 /**
- * 
- * @author klevi, pcorazza 
- * @since Oct 22, 2004
- * <p>
  * Class Description: This screen presents the list of all E-Bazaar
  * catalogs. As of creation date, there were just two catalogs in the 
  * default data: Books
@@ -32,25 +33,6 @@ import gui.CatalogListWindow;
  * of ProductListWindow, displaying the available items for the selected
  * catalog.
  * Students:  See the readdata method for where data is put into the table.
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * <tr>
- * 		<td>jan 19 2005</td>
- *      <td>klevi</td>
- *      <td>modified class and readdata comments</td>
- * </tr>
- * </table>
  *
  */
 public class CatalogListWindow extends javax.swing.JWindow implements ParentWindow {
@@ -64,7 +46,7 @@ public class CatalogListWindow extends javax.swing.JWindow implements ParentWind
 	
 	//should be set to 'false' if data for table is obtained from a database
 	//or some external file
-	private final boolean USE_DEFAULT_DATA = true;
+	private final boolean USE_DEFAULT_DATA = false;
 	
 
 	
@@ -183,13 +165,54 @@ public class CatalogListWindow extends javax.swing.JWindow implements ParentWind
 	/**
 	 * If default data is being used, this method obtains it
 	 * and then passes it to updateModel(List). If real data is
-	 * being used, the public updateModel(List) should be called by
-	 * the controller class.
+	 * being used, but in the context of the GuiDB exercise,
+	 * then the database is accessed from here. If real data
+	 * is being used and controllers have been created, the appropriate
+	 * controller should call the updateModel(List) method in order
+	 * to populate the table for this screen.
 	 */
 	private void updateModel() {
 		List<String[]> theData = new ArrayList<String[]>();
         if(USE_DEFAULT_DATA) {
-			//theData = DefaultData.getCatalogTypes();
+        	System.out.println("using default");
+			theData = DefaultData.getCatalogTypes();
+        }
+        else {
+        	System.out.println("using db");
+        	Connection con = null;
+        	Statement stmt = null;
+        	String dburl = "jdbc:mysql://localhost:3306/ProductsDb";
+     
+    		try {
+    			Class.forName("com.mysql.jdbc.Driver");
+    		}
+    		catch(ClassNotFoundException e){
+    			//debug
+    			e.printStackTrace();
+    		}
+    		try{
+    			con = DriverManager.getConnection(dburl, "root", "1");
+    		}
+    		catch(SQLException e){
+    			System.out.println(e.getMessage());
+    			e.printStackTrace();
+    		}
+    		try {
+    			stmt = con.createStatement();
+    			ResultSet rs = stmt.executeQuery("SELECT * FROM CatalogType");
+    			while(rs.next()){
+    				String id = rs.getString("catalogid");
+    				String name = rs.getString("catalogname");
+    				System.out.println("id: "+ id + " name: "+name);
+    				theData.add(new String[]{name});
+    			}
+    			stmt.close();
+    			con.close();
+    		}
+    		catch(SQLException s){
+    			s.printStackTrace();
+    		}
+
         }
 		updateModel(theData);
  	}	

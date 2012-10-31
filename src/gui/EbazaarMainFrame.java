@@ -14,10 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 /**
- * 
- * @author pcorazza 
- * @since Oct 22, 2004
- * <p>
+
  * Class Description: This is the entry point into the E-Bazaar application.
  * It is implemented as a JFrame and provides a splash screen. Navigation
  * is by way of a menu bar. This class represents the starting point
@@ -25,21 +22,6 @@ import javax.swing.UIManager;
  * Note: If splash image does not appear, modify the 
  * value stored in GuiControl.SPLASH_IMAGE so that it points
  * to logo.jpg.
- * <p>
- * <table border="1">
- * <tr>
- * 		<th colspan="3">Change Log</th>
- * </tr>
- * <tr>
- * 		<th>Date</th> <th>Author</th> <th>Change</th>
- * </tr>
- * <tr>
- * 		<td>Oct 22, 2004</td>
- *      <td>klevi, pcorazza</td>
- *      <td>New class file</td>
- * </tr>
- * </table>
- *
  */
 public class EbazaarMainFrame extends javax.swing.JFrame {
 	
@@ -68,7 +50,7 @@ public class EbazaarMainFrame extends javax.swing.JFrame {
     JMenuItem menuItemRetrieveSavedCart;  
 
     
-	public EbazaarMainFrame() { 
+	public EbazaarMainFrame() {
 		setLookAndFeel();
 		handleWindowClosing();
 		setTitle(EBAZAAR_APP_NAME);
